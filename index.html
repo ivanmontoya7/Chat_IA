@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/styles.css">
+    <title>IA MONTOYA333</title>
+</head>
+
+<body>
+    <h1>IA MONTOYA™</h1>
+    <input id="pregunta"><button id="enviar">Enviar</button><br>
+
+    <!-- Código hecho aquí debido a que hace falta un servidor para utilizar modulos -->
+    <script type="module">
+        import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+
+        let boton = document.getElementById("enviar");
+        let pregunta = document.getElementById("pregunta");
+        let n_pregunta = document.getElementById("n_pregunta");
+        let n_respuesta = document.getElementById("n_respuesta");
+        boton.addEventListener("click", respuesta_IA);
+        boton.addEventListener("click", generar_pregunta);
+
+        //Modulo IA
+        const initProgressCallback = (initProgress) => {
+            console.log(initProgress);
+        }
+        //https://github.com/mlc-ai/web-llm/blob/main/src/config.ts#L293
+        const selectedModel = "Qwen2-0.5B-Instruct-q0f16-MLC";
+
+        const engine = await CreateMLCEngine(
+            selectedModel,
+            { initProgressCallback: initProgressCallback }, // engineConfig
+        );
+
+        async function respuesta_IA() {
+            const messages = [
+                { role: "system", content: "You speak spanish" },
+                { role: "user", content: pregunta.value },
+            ];
+            const reply = await engine.chat.completions.create({
+                messages,
+            });
+            document.body.appendChild(document.createElement("h3")).innerText = "Respuesta";
+            document.body.appendChild(document.createElement("p")).innerText = reply.choices[0].message.content;
+
+        }
+
+        function generar_pregunta() {
+            document.body.appendChild(document.createElement("h3")).innerText = "Pregunta";
+            document.body.appendChild(document.createElement("p")).innerText = pregunta.value;
+
+        }
+
+    </script>
+</body>
+
+</html>
